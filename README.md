@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LLM Cards
 
-## Getting Started
+A modern, interactive chat interface that provides fast exploratory responses with intelligent follow-up options. Get quick insights from a fast model, then dive deeper with structured detailed responses.
 
-First, run the development server:
+## ✨ Features
+
+- **Dual-Speed Processing**: Fast responses from `mistralai/ministral-3b` for quick exploration, detailed analysis from `google/gemini-2.5-pro`
+- **Smart Badge System**: Context-aware reasoning badges that suggest alternative perspectives
+- **Conversation Steering**: Click badges to regenerate responses with specific focus areas
+- **Swipe Interactions**:
+  - 👈 Swipe left to try a different approach
+  - 👉 Swipe right to expand into detailed, structured sections
+- **Section-Based Layout**: Detailed responses are intelligently broken into digestible card sections
+- **Conversation History**: Full context preservation across all interactions
+- **Mobile Responsive**: Optimized for both desktop and touch devices
+
+## 🚀 Quick Start
+
+### 1. Environment Setup
+
+Copy the environment example and add your API key:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then edit `.env.local` and add your OpenRouter API key:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Get your API key from [OpenRouter](https://openrouter.ai/keys).
 
-## Learn More
+### 2. Install Dependencies
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Run Development Server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) to start exploring!
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎯 How to Use
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Ask a Question**: Type any question in the input field
+2. **Fast Response**: Get a quick response from the fast model with reasoning badges
+3. **Explore Alternatives**: Click badges to regenerate with different focus areas
+4. **Try Different Approaches**: Swipe left to get alternative reasoning
+5. **Go Deeper**: Swipe right to get a comprehensive, structured breakdown
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 14 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **LLM Provider**: OpenRouter
+- **Models**:
+  - Fast: `mistralai/ministral-3b`
+  - Detailed: `google/gemini-2.5-pro`
+
+## 📱 Mobile Experience
+
+The app is fully optimized for mobile devices with:
+
+- Touch-friendly swipe gestures
+- Responsive card layouts
+- Optimized loading states
+- Proper touch target sizes
+
+## 🎨 Design Philosophy
+
+- **Progressive Disclosure**: Start simple, allow deeper exploration
+- **Context Preservation**: Every interaction builds on previous conversations
+- **Intelligent Sectioning**: LLM automatically structures content for optimal readability
+- **No Scrolling**: Each card is sized to fit content without scrolling needs
+
+## 📖 Architecture
+
+- `CardInterface.tsx`: Main state management and orchestration
+- `CardSwipeable.tsx`: Swipe interactions and card rendering
+- `QuestionInput.tsx`: Input handling and history management
+- `streamLLM.ts`: Dual-mode LLM integration (streaming + structured)
+
+## 🔧 Development
+
+Built with modern React patterns:
+
+- Server Actions for LLM integration
+- Streaming responses with AbortController
+- State machines for interaction flows
+- Progressive enhancement for mobile
+
+---
+
+_Explore ideas at the speed of thought, then dive as deep as you want to go._
