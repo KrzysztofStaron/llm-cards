@@ -138,6 +138,32 @@
   background: rgba(139, 92, 246, 0.5);
 }
 
+/* Terminal scrollbar styles */
+.terminal-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 197, 94, 0.3) transparent;
+}
+
+.terminal-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.5);
+}
+
 /* Better prose styles for markdown content */
 .prose h1:first-child,
 .prose h2:first-child,
@@ -182,11 +208,61 @@
   animation: blink 1s infinite;
 }
 
+/* Matrix terminal effects */
+@keyframes matrix-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.8), 0 0 15px rgba(34, 197, 94, 0.4);
+  }
+}
+
+.matrix-glow {
+  animation: matrix-glow 2s ease-in-out infinite;
+}
+
+/* Terminal window glow effect */
+.terminal-shadow {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.1), 0 0 40px rgba(34, 197, 94, 0.05), inset 0 0 60px rgba(34, 197, 94, 0.02);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    background-color: #000000 !important;
+    margin: 0;
+    padding: 0;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    font-family: "Courier New", "Monaco", "Menlo", "Ubuntu Mono", monospace;
+    background-color: #000000 !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Force monospace for all text elements */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div,
+  button,
+  input,
+  textarea {
+    font-family: "Courier New", "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  }
+
+  /* Ensure font-mono class uses Matrix-style monospace */
+  .font-mono {
+    font-family: "Courier New", "Monaco", "Menlo", "Ubuntu Mono", monospace !important;
   }
 }

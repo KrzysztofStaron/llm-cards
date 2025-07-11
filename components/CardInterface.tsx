@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import QuestionInput from "./QuestionInput";
 import CardSwipeable from "./CardSwipeable";
-import { streamLLM, getStructuredDetailedResponse } from "@/app/actions/streamLLM";
+import { streamLLM } from "@/app/actions/streamLLM";
 
 interface CardData {
   id: string;
@@ -431,119 +431,105 @@ export default function CardInterface() {
         updatedCards[currentCardIndex] = {
           ...updatedCards[currentCardIndex],
           model: "google/gemini-2.5-pro",
-          isStreaming: false,
+          isStreaming: true,
           state: "detailed_responding",
           reasoningBadges: undefined,
-          response: "Generating detailed sections...",
+          response: "",
         };
       }
       return updatedCards;
     });
 
-    try {
-      // Build conversation history excluding current card and add expansion request
-      const conversationHistory = buildConversationHistory(currentCardIndex);
-      const messages: ChatMessage[] = [
-        ...conversationHistory,
-        { role: "user", content: currentCard.question },
-        { role: "assistant", content: currentCard.response },
-        {
-          role: "user",
-          content:
-            "I like this approach. Please provide a more comprehensive, detailed, and improved answer. Build upon the good points, correct any limitations, add more depth and nuance, and provide additional insights or examples.",
-        },
-      ];
+    // Build conversation history excluding current card and add expansion request
+    const conversationHistory = buildConversationHistory(currentCardIndex);
+    const messages: ChatMessage[] = [
+      ...conversationHistory,
+      { role: "user", content: currentCard.question },
+      { role: "assistant", content: currentCard.response },
+      {
+        role: "user",
+        content:
+          "I like this approach. Please provide a more comprehensive, detailed, and improved answer. Keep it concise and screen-friendly (under 10 lines).",
+      },
+    ];
 
-      // Get structured detailed response from LLM
-      const sections = await getStructuredDetailedResponse(messages);
+    // Start streaming with slow model for enhanced response
+    let isFirstChunk = true;
+    const abort = await streamResponse(
+      messages,
+      "slow",
+      "google/gemini-2.5-pro",
+      chunk => {
+        // Stop loading state on first chunk
+        if (isFirstChunk) {
+          setIsLoading(false);
+          isFirstChunk = false;
+        }
 
-      setCards(prevCards => {
-        const updatedCards = [...prevCards];
-        if (updatedCards[currentCardIndex]) {
-          updatedCards[currentCardIndex] = {
-            ...updatedCards[currentCardIndex],
-            isStreaming: false,
-            state: "detailed_complete",
-            detailedSections: sections,
-            response: "", // Clear the temporary message
-          };
-        }
-        return updatedCards;
-      });
-    } catch (error) {
-      console.error("Error getting structured response:", error);
-      setCards(prevCards => {
-        const updatedCards = [...prevCards];
-        if (updatedCards[currentCardIndex]) {
-          updatedCards[currentCardIndex] = {
-            ...updatedCards[currentCardIndex],
-            isStreaming: false,
-            state: "fast_complete", // Revert to previous state
-            response: currentCard.response, // Restore original response
-          };
-        }
-        return updatedCards;
-      });
-    } finally {
-      setIsLoading(false);
-      abortControllerRef.current = null;
-    }
+        // Update the card's response as chunks arrive
+        setCards(prevCards => {
+          const updatedCards = [...prevCards];
+          if (updatedCards[currentCardIndex]) {
+            updatedCards[currentCardIndex] = {
+              ...updatedCards[currentCardIndex],
+              response: updatedCards[currentCardIndex].response + chunk,
+            };
+          }
+          return updatedCards;
+        });
+      },
+      () => {
+        // Mark detailed response as complete
+        setCards(prevCards => {
+          const updatedCards = [...prevCards];
+          if (updatedCards[currentCardIndex]) {
+            updatedCards[currentCardIndex] = {
+              ...updatedCards[currentCardIndex],
+              isStreaming: false,
+              state: "detailed_complete",
+            };
+          }
+          return updatedCards;
+        });
+        abortControllerRef.current = null;
+      },
+      error => {
+        console.error("Error streaming detailed response:", error);
+        setIsLoading(false);
+        abortControllerRef.current = null;
+      }
+    );
   };
 
   const currentCard = cards[currentCardIndex];
   const hasDetailedSections = currentCard?.detailedSections && currentCard.detailedSections.length > 0;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="w-full max-w-4xl mx-auto space-y-4">
       <QuestionInput onSubmit={handleQuestionSubmit} isLoading={isLoading} />
 
       {currentCard && (
-        <div className={hasDetailedSections ? "space-y-6" : "relative h-[600px]"}>
-          {hasDetailedSections ? (
-            // Display detailed sections as separate card containers
-            <>
-              {currentCard.detailedSections!.map((section, index) => (
-                <div key={index} className="relative h-[400px]">
-                  <CardSwipeable
-                    card={{
-                      ...currentCard,
-                      response: section.content,
-                      detailedSections: undefined,
-                      reasoningBadges: undefined,
-                      sectionTitle: section.title,
-                    }}
-                    onSwipeLeft={() => {}}
-                    onSwipeRight={() => {}}
-                    onBadgeClick={() => {}}
-                    isLoading={false}
-                    isDetailedSection={true}
-                  />
-                </div>
-              ))}
-            </>
-          ) : (
-            // Display single card
-            <CardSwipeable
-              card={currentCard}
-              onSwipeLeft={handleSwipeLeft}
-              onSwipeRight={handleSwipeRight}
-              onBadgeClick={handleBadgeClick}
-              isLoading={isLoading}
-            />
-          )}
+        <div className="relative" style={{ height: "calc(100vh - 200px)" }}>
+          <CardSwipeable
+            card={currentCard}
+            onSwipeLeft={handleSwipeLeft}
+            onSwipeRight={handleSwipeRight}
+            onBadgeClick={handleBadgeClick}
+            isLoading={isLoading}
+          />
         </div>
       )}
 
       {cards.length > 1 && (
-        <div className="flex justify-center gap-2 pb-4">
+        <div className="flex justify-center gap-2 py-2">
           {cards.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentCardIndex(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentCardIndex ? "bg-purple-500 w-8" : "bg-muted hover:bg-muted-foreground/30 w-2"
+              className={`h-1 rounded-full transition-all duration-300 ${
+                index === currentCardIndex ? "bg-green-400 w-6" : "bg-green-800 hover:bg-green-600 w-1"
               }`}
-              aria-label={`Go to card ${index + 1}`}
+              aria-label={`Go to terminal ${index + 1}`}
             />
           ))}
         </div>
@@ -551,7 +537,8 @@ export default function CardInterface() {
 
       {!currentCard && !isLoading && (
         <div className="text-center py-20">
-          <p className="text-muted-foreground text-lg">Ask a question to get started</p>
+          <p className="text-green-500/80 text-lg font-mono">&gt; READY_FOR_INPUT...</p>
+          <p className="text-green-700/60 text-sm mt-2">[AWAITING_NEURAL_QUERY]</p>
         </div>
       )}
     </div>
