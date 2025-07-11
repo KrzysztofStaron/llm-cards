@@ -23,40 +23,10 @@ type ChatMessage = {
   content: string;
 };
 
-const DetailedLoadingCard = () => (
-  <div className="relative h-[400px]">
-    <div className="absolute inset-0 flex items-center justify-center px-4">
-      <div className="relative w-full max-w-3xl h-[380px] flex flex-col transition-transform border-border/50 bg-card shadow-lg rounded-lg">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto" />
-            <div className="space-y-2">
-              <p className="text-lg font-medium text-foreground">🧠 Analyzing & Structuring</p>
-              <p className="text-sm text-muted-foreground">Breaking down the response into digestible sections...</p>
-            </div>
-            <div className="flex justify-center space-x-1">
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-              <div
-                className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"
-                style={{ animationDelay: "0.2s" }}
-              ></div>
-              <div
-                className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"
-                style={{ animationDelay: "0.4s" }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 export default function CardInterface() {
   const [cards, setCards] = useState<CardData[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGeneratingDetailed, setIsGeneratingDetailed] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Build conversation history from existing cards
@@ -452,7 +422,7 @@ export default function CardInterface() {
       abortControllerRef.current = null;
     }
 
-    setIsGeneratingDetailed(true);
+    setIsLoading(true);
 
     // Update current card to detailed responding state
     setCards(prevCards => {
@@ -464,6 +434,7 @@ export default function CardInterface() {
           isStreaming: false,
           state: "detailed_responding",
           reasoningBadges: undefined,
+          response: "Generating detailed sections...",
         };
       }
       return updatedCards;
@@ -509,28 +480,14 @@ export default function CardInterface() {
             isStreaming: false,
             state: "fast_complete", // Revert to previous state
             response: currentCard.response, // Restore original response
-            reasoningBadges: generateReasoningBadges(currentCard.question, currentCard.response),
           };
         }
         return updatedCards;
       });
     } finally {
-      setIsGeneratingDetailed(false);
+      setIsLoading(false);
       abortControllerRef.current = null;
     }
-  };
-
-  const handleClearHistory = () => {
-    // Abort any ongoing stream
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-
-    setCards([]);
-    setCurrentCardIndex(0);
-    setIsLoading(false);
-    setIsGeneratingDetailed(false);
   };
 
   const currentCard = cards[currentCardIndex];
@@ -538,19 +495,11 @@ export default function CardInterface() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <QuestionInput
-        onSubmit={handleQuestionSubmit}
-        onClearHistory={handleClearHistory}
-        isLoading={isLoading || isGeneratingDetailed}
-        hasHistory={cards.length > 0}
-      />
+      <QuestionInput onSubmit={handleQuestionSubmit} isLoading={isLoading} />
 
       {currentCard && (
-        <div className={hasDetailedSections || isGeneratingDetailed ? "space-y-6" : "relative h-[600px]"}>
-          {isGeneratingDetailed ? (
-            // Show detailed loading state
-            <DetailedLoadingCard />
-          ) : hasDetailedSections ? (
+        <div className={hasDetailedSections ? "space-y-6" : "relative h-[600px]"}>
+          {hasDetailedSections ? (
             // Display detailed sections as separate card containers
             <>
               {currentCard.detailedSections!.map((section, index) => (

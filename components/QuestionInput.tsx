@@ -1,18 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Send, RotateCcw } from "lucide-react";
+import { Send } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface QuestionInputProps {
   onSubmit: (question: string) => void;
-  onClearHistory?: () => void;
   isLoading: boolean;
-  hasHistory?: boolean;
 }
 
-export default function QuestionInput({ onSubmit, onClearHistory, isLoading, hasHistory = false }: QuestionInputProps) {
+export default function QuestionInput({ onSubmit, isLoading }: QuestionInputProps) {
   const [question, setQuestion] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,45 +21,30 @@ export default function QuestionInput({ onSubmit, onClearHistory, isLoading, has
     }
   };
 
-  const handleClearHistory = () => {
-    if (onClearHistory && !isLoading) {
-      onClearHistory();
-    }
-  };
-
   return (
-    <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="w-full">
+      <div className="flex gap-2">
         <Input
+          type="text"
           value={question}
           onChange={e => setQuestion(e.target.value)}
-          placeholder="Ask any question..."
+          placeholder="Ask me anything..."
           disabled={isLoading}
-          className="flex-1"
+          className="flex-1 h-12 text-lg bg-background/50 backdrop-blur-sm border-purple-400/30 focus:border-purple-400"
         />
         <Button
           type="submit"
+          size="lg"
           disabled={!question.trim() || isLoading}
-          className="bg-purple-600 hover:bg-purple-700 text-white"
+          className="h-12 px-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
         >
-          <Send className="h-4 w-4" />
+          {isLoading ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+          ) : (
+            <Send className="w-5 h-5" />
+          )}
         </Button>
-      </form>
-
-      {hasHistory && (
-        <div className="flex justify-center">
-          <Button
-            onClick={handleClearHistory}
-            disabled={isLoading}
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Clear History
-          </Button>
-        </div>
-      )}
-    </div>
+      </div>
+    </form>
   );
 }

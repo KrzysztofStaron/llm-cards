@@ -147,23 +147,16 @@ export default function CardSwipeable({
       {!hasDetailedSections && !isDetailedSection && (
         <>
           <div
-            className={`absolute -left-2 top-1/2 -translate-y-1/2 flex items-center gap-3 transition-all duration-300 pointer-events-none ${
+            className={`absolute -left-8 top-1/2 -translate-y-1/2 transition-all duration-300 pointer-events-none ${
               position.x < -50 ? "opacity-100 scale-110" : "opacity-40"
             }`}
           >
-            <div className="flex items-center gap-3 text-red-500/80">
-              <div className="flex flex-col items-center bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-red-500/20">
-                <ChevronLeft className="w-6 h-6 mb-1" />
-                <span className="font-medium text-xs text-center leading-tight">
-                  New
-                  <br />
-                  Approach
-                </span>
-              </div>
+            <div className="bg-background/60 backdrop-blur-md rounded-full p-3 border border-red-500/30 shadow-lg">
+              <ChevronLeft className="w-8 h-8 text-red-500" />
             </div>
           </div>
           <div
-            className={`absolute -right-2 top-1/2 -translate-y-1/2 flex items-center gap-3 transition-all duration-300 pointer-events-none ${
+            className={`absolute -right-8 top-1/2 -translate-y-1/2 transition-all duration-300 pointer-events-none ${
               position.x > 50 && card.state === "fast_complete"
                 ? "opacity-100 scale-110"
                 : card.state === "fast_complete"
@@ -171,11 +164,8 @@ export default function CardSwipeable({
                 : "opacity-20"
             }`}
           >
-            <div className="flex items-center gap-3 text-green-500/80">
-              <div className="flex flex-col items-center bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-green-500/20">
-                <ChevronRight className="w-6 h-6 mb-1" />
-                <span className="font-medium text-xs text-center leading-tight">Expand</span>
-              </div>
+            <div className="bg-background/60 backdrop-blur-md rounded-full p-3 border border-green-500/30 shadow-lg">
+              <ChevronRight className="w-8 h-8 text-green-500" />
             </div>
           </div>
         </>
