@@ -104,7 +104,12 @@ export default function LLMCardsLanding() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" className="text-green-400 hover:text-green-300 hover:bg-green-500/10">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-green-400 hover:text-green-300 hover:bg-green-500/10"
+                onClick={() => window.open("https://github.com/KrzysztofStaron/llm-cards", "_blank")}
+              >
                 <Github className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">source</span>
               </Button>
@@ -154,7 +159,8 @@ export default function LLMCardsLanding() {
               <div className="space-y-4 mb-8 text-green-300">
                 <p className="text-lg leading-relaxed">{">"} Revolutionary interface that replaces broken chatbot UX</p>
                 <p className="text-lg leading-relaxed">
-                  {">"} <span className="text-green-400 font-bold">Swipe left</span> → Fast insights (ministral-3b)
+                  {">"} <span className="text-green-400 font-bold">Swipe left</span> → Fast insights (whatever is the
+                  fastest rn)
                 </p>
                 <p className="text-lg leading-relaxed">
                   {">"} <span className="text-green-400 font-bold">Swipe right</span> → Deep analysis (Grok-4)
@@ -250,7 +256,7 @@ export default function LLMCardsLanding() {
                           >
                             <ArrowLeft className="w-6 h-6 text-green-400 group-hover:text-green-300" />
                             <span className="text-green-400 text-xs">FAST</span>
-                            <span className="text-green-600 text-xs">ministral-3b</span>
+                            <span className="text-green-600 text-xs">phi-3-mini</span>
                           </button>
                           <button
                             onClick={() => simulateSwipe("right")}
@@ -447,6 +453,7 @@ export default function LLMCardsLanding() {
                   variant="outline"
                   size="lg"
                   className="px-8 py-4 text-lg border-green-500/30 hover:bg-green-500/10 text-green-400 bg-transparent"
+                  onClick={() => window.open("https://github.com/KrzysztofStaron/llm-cards", "_blank")}
                 >
                   <Github className="w-5 h-5 mr-2" />
                   view_source
