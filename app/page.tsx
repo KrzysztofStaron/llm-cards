@@ -8,7 +8,6 @@ import {
   ArrowRight,
   Terminal,
   Zap,
-  Brain,
   Layers,
   MessageSquare,
   Sparkles,
