@@ -1,177 +1,213 @@
-read# LLM Cards
+# LLM Cards
 
 ![LLM Cards](public/og-image.jpg)
+![LLM Cards](public/ss.png)
 
-## Swipe Interface for AI Interaction
+## Swipe-Based AI Interface for Smart Exploration
 
-LLM Cards is an open-source application that provides an intuitive swipe interface for AI interaction. Instead of linear conversations, you get instant access to multiple AI perspectives through simple gestures.
+LLM Cards is an innovative AI interface that transforms how you interact with language models. Instead of traditional chat interfaces, you get instant access to multiple AI perspectives through intuitive swipe gestures.
 
-**Created by [@PanzerBread](https://x.com/PanzerBread) on X**
+**Created by [@PanzerBread](https://x.com/PanzerBread)**
 
-## What Does It Do?
+## ✨ What Makes It Special
 
-- **🔄 Swipe Interface**: Swipe left for fast insights, swipe right for deep analysis
-- **🧠 Multi-Model Intelligence**: Different AI models for different needs (Mistral-3B for speed, Grok-4 for depth)
-- **🎯 Smart Caching**: Pre-generated detailed responses for instant access
-- **🏷️ Dynamic Badges**: AI-generated topic suggestions for infinite exploration
-- **⚡ Terminal Aesthetic**: Clean, focused interface inspired by developer terminals
-- **🌙 Dark Mode Design**: Beautiful, modern UI optimized for dark themes
+- **🔄 Swipe Interface**: Revolutionary gesture-based AI interaction
+- **⚡ Dual-Speed Responses**: Fast insights vs. deep analysis
+- **🏷️ Smart Topic Badges**: AI-generated suggestions for infinite exploration
+- **🖥️ Terminal Aesthetic**: Beautiful, developer-inspired dark interface
+- **🧠 Multi-Model Intelligence**: Optimized model selection for different needs
 
-## How It Works
+## 🚀 How It Works
 
-1. **Ask Once**: Type your question or idea into the interface
+1. **Ask Your Question**: Type anything you want to explore
 2. **Swipe to Explore**:
-   - **Swipe Left** → Get fast insights from Mistral-3B
-   - **Swipe Right** → Access deep analysis from Grok-4
-3. **Tap Badges**: Discover related topics and explore infinitely
-4. **Explore**: Navigate through related topics and perspectives
+   - **← Swipe Left**: Get fast insights using Phi-3 Mini
+   - **→ Swipe Right**: Access detailed analysis using Grok-4
+3. **Tap Topic Badges**: Discover related concepts and dive deeper
+4. **Navigate Cards**: Browse through your exploration history
 
-## Required Environment Variables
+## 🛠️ Technology Stack
 
-To run LLM Cards, you need these environment variables:
+- **Framework**: Next.js 15 with App Router
+- **Frontend**: React 19, TypeScript
+- **Styling**: Tailwind CSS v4, shadcn/ui components
+- **AI Integration**: OpenRouter API
+- **Models**:
+  - Fast: Microsoft Phi-3 Mini (128K context)
+  - Detailed: X AI Grok-4
+- **Animations**: Framer Motion for smooth interactions
+- **Package Manager**: pnpm
 
-```bash
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-```
+## 🔧 Installation & Setup
 
-- **OPENROUTER_API_KEY**: For accessing multiple AI models (Mistral-3B, Grok-4, etc.)
+### Prerequisites
 
-## Quick Start
+- Node.js 18+
+- pnpm package manager
+- OpenRouter API key
 
-1. **Clone the repository**:
+### Quick Start
+
+1. **Clone the repository**
 
    ```bash
    git clone https://github.com/KrzysztofStaron/llm-cards.git
    cd llm-cards
    ```
 
-2. **Install dependencies**:
+2. **Install dependencies**
 
    ```bash
    pnpm install
    ```
 
-3. **Set up environment variables**:
-   Create a `.env.local` file in the root directory:
+3. **Set up environment variables**
+
+   Copy `.env.example` to `.env.local`:
+
+   ```bash
+   cp env.example .env.local
+   ```
+
+   Add your OpenRouter API key:
 
    ```bash
    OPENROUTER_API_KEY=your_openrouter_api_key_here
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
    ```
 
-4. **Build and run**:
+4. **Run the development server**
 
    ```bash
-   pnpm build
-   pnpm start
+   pnpm dev
    ```
 
-5. **Open your browser**:
+5. **Open your browser**
+
    Navigate to `http://localhost:3000`
 
-## Features
+## 🌟 Key Features
 
-### 🔄 Swipe Interface
+### Swipe Interface
 
-- **Left Swipe**: Fast insights using Mistral-3B for quick understanding
-- **Right Swipe**: Deep analysis using Grok-4 for comprehensive exploration
-- **Gesture-Based**: Intuitive touch and mouse interactions
-- **Fast Response**: Pre-cached responses for quick access
+- **Left Swipe**: Fast responses optimized for quick understanding
+- **Right Swipe**: Comprehensive analysis with detailed explanations
+- **Smooth Animations**: Fluid gesture-based interactions using Framer Motion
+- **Touch & Mouse Support**: Works on desktop and mobile devices
 
-### 🧠 Multi-Model Orchestra
+### Smart AI Routing
 
-- **Mistral-3B**: Optimized for speed and efficiency
-- **Grok-4**: Designed for depth and comprehensive analysis
-- **Smart Routing**: Automatic model selection based on user intent
-- **Seamless Integration**: No visible model switching for users
+- **Fast Model**: Microsoft Phi-3 Mini for rapid insights
+- **Detailed Model**: X AI Grok-4 for comprehensive analysis
+- **Context Awareness**: Maintains conversation history across swipes
+- **Streaming Responses**: Real-time text streaming for better UX
 
-### 🎯 Smart Caching System
+### Topic Exploration
 
-- **Pre-Generated Responses**: Detailed analysis cached in background
-- **Instant Access**: No waiting when you swipe right for deep insights
-- **Cost Optimization**: Efficient API usage through intelligent caching
-- **Performance Optimized**: Fast response times
+- **AI-Generated Badges**: Contextual topic suggestions after each response
+- **Infinite Discovery**: Each badge click opens new exploration paths
+- **Related Concepts**: Discover connections you might not have considered
+- **Progressive Learning**: Build knowledge through guided exploration
 
-### 🏷️ AI Navigation
+### Terminal Aesthetic
 
-- **Dynamic Badges**: Context-aware topic suggestions
-- **Guided Exploration**: AI suggests related topics and directions
-- **Related Topics**: Discover connections and new perspectives
-- **Progressive Disclosure**: Start simple, go deep when needed
+- **Dark Theme**: Easy on the eyes with green terminal colors
+- **Monospace Typography**: Clean, focused reading experience
+- **Minimalist Design**: No distractions, just pure information
+- **Responsive Layout**: Optimized for all screen sizes
 
-### 🛠️ Developer Features
+## 🎯 Use Cases
 
-- **Terminal Aesthetic**: Clean, distraction-free interface
-- **Responsive Design**: Works perfectly on desktop and mobile
-- **TypeScript**: Full type safety and modern development experience
-- **Open Source**: Complete transparency and community contribution
+- **Learning & Research**: Explore topics from multiple angles
+- **Creative Writing**: Get different perspectives on ideas
+- **Problem Solving**: Fast solutions vs. detailed analysis
+- **Curiosity-Driven Exploration**: Let AI guide your learning journey
 
-## Technology Stack
+## 🔐 Environment Variables
 
-- **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS, shadcn/ui components
-- **AI Integration**: OpenRouter API (Mistral-3B, Grok-4, and more)
-- **Package Manager**: pnpm
-- **Deployment**: Vercel-ready configuration
+Create a `.env.local` file with:
 
-## API Costs
+```bash
+# Required
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 
-- **Fast Responses**: ~$0.00015 per 1K tokens (Mistral-3B via OpenRouter)
-- **Deep Analysis**: ~$0.0003 per 1K tokens (Grok-4 via OpenRouter)
-- **Smart Caching**: Reduces costs by pre-generating responses
-- **Development**: Optimized for minimal API calls during development
+# Optional
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
-## Development vs Production
+Get your OpenRouter API key at [https://openrouter.ai/keys](https://openrouter.ai/keys)
 
-**Development Mode** (localhost):
+## 🏗️ Project Structure
 
-- Local caching for faster development
-- Debug tools available
-- Console logging enabled
-- Optimized for rapid iteration
+```
+llm-cards/
+├── app/
+│   ├── actions/
+│   │   └── streamLLM.ts          # AI model integration
+│   ├── globals.css               # Global styles
+│   ├── layout.tsx               # App layout with metadata
+│   └── page.tsx                 # Landing page
+├── components/
+│   ├── CardInterface.tsx        # Main interface logic
+│   ├── CardSwipeable.tsx        # Swipe gesture handling
+│   ├── QuestionInput.tsx        # Input component
+│   └── ui/                      # shadcn/ui components
+├── lib/
+│   └── utils.ts                 # Utility functions
+└── public/                      # Static assets
+```
 
-**Production Mode**:
+## 💡 Development
 
-- Smart caching for optimal performance
-- Debug tools hidden
-- Optimized for user experience
-- Cost-effective API usage
+### Adding New Models
 
-## The Problem We Solve
+Edit `app/actions/streamLLM.ts` to add or change AI models:
 
-### ❌ Traditional Chatbot Limitations
+```typescript
+const FAST_MODEL = "microsoft/phi-3-mini-128k-instruct";
+const SLOW_MODEL = "x-ai/grok-4";
+```
 
-- **Linear Conversations**: Requires thinking of follow-up questions
-- **Thread Management**: Conversations become difficult to navigate
-- **Single Response**: Limited to one response per query
-- **Prompt Engineering**: Requires crafting specific prompts
+### Customizing Appearance
 
-### ✅ LLM Cards Approach
+Modify colors and styling in `app/globals.css` and component files.
 
-- **Guided Exploration**: AI suggests related topics and directions
-- **Easy Discovery**: Multiple perspectives accessible through simple gestures
-- **Multi-Model Access**: Different AI models for different needs
-- **Progressive Disclosure**: Start simple, access depth when needed
+### Adding Features
 
-## Contributing
+The modular component structure makes it easy to extend functionality.
 
-LLM Cards is 100% open source and community-driven. We welcome contributions!
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Add your environment variables in Vercel dashboard
+4. Deploy automatically
+
+### Other Platforms
+
+The app is built with Next.js and can be deployed to any platform that supports Node.js.
+
+## 🤝 Contributing
+
+LLM Cards is open source! Contributions are welcome:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-## License
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## 🆘 Support
 
-- **GitHub Issues**: Report bugs and request features
-- **Community**: Join developers, AI enthusiasts, and creative minds
-- **Creator**: Follow [@PanzerBread](https://x.com/PanzerBread) on X
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/KrzysztofStaron/llm-cards/issues)
+- **Creator**: Follow [@PanzerBread](https://x.com/PanzerBread) on X for updates
 
 ---
 
-**A modern approach to AI interaction through intuitive swipe gestures.**
+**Transform your AI interactions from linear conversations to dynamic exploration.**

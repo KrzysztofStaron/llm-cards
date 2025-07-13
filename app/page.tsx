@@ -392,7 +392,7 @@ export default function LLMCardsLanding() {
                 <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-green-400 transition-all duration-300">
                   <Clock className="w-6 h-6 text-green-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-4 text-white">Progressive Disclosure</h3>
+                <h3 className="text-xl font-semibold mb-4 text-white">Fast</h3>
                 <p className="text-green-300 leading-relaxed">
                   Start simple, go deep only when needed. Cognitive offloading at its finest.
                 </p>
