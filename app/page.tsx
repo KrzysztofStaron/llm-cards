@@ -100,7 +100,7 @@ export default function LLMCardsLanding() {
               </div>
               <div>
                 <span className="text-2xl font-bold text-green-400">LLM_CARDS</span>
-                <div className="text-xs text-green-600 -mt-1">v2.0.1-beta</div>
+                <div className="text-xs text-green-600 -mt-1">v69.4.20-beta</div>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -471,7 +471,7 @@ export default function LLMCardsLanding() {
               </div>
               <div>
                 <span className="text-xl font-bold text-green-400">LLM_CARDS</span>
-                <div className="text-xs text-green-600 -mt-1">v2.0.1-beta</div>
+                <div className="text-xs text-green-600 -mt-1">v69.4.20-beta</div>
               </div>
             </div>
             <div className="text-sm text-green-600">© 2024 LLM Cards. Open source revolution. Built for explorers.</div>
