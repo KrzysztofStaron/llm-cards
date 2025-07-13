@@ -323,13 +323,6 @@ export default function LLMCardsLanding() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/30 rounded">
-                  <Brain className="w-5 h-5 text-green-400 mt-1 flex-shrink-0" />
-                  <div>
-                    <div className="text-green-300 font-medium">Multiple perspectives</div>
-                    <div className="text-green-400/80 text-sm">Different angles instantly</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/30 rounded">
                   <Infinity className="w-5 h-5 text-green-400 mt-1 flex-shrink-0" />
                   <div>
                     <div className="text-green-300 font-medium">Infinite discovery</div>
