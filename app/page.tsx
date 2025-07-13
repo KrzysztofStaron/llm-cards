@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -46,11 +45,6 @@ export default function LLMCardsLanding() {
   const [currentExample, setCurrentExample] = useState(0);
   const [showResponse, setShowResponse] = useState<"none" | "fast" | "detailed">("none");
   const [isTyping, setIsTyping] = useState(false);
-  const router = useRouter();
-
-  const handleLaunchApp = () => {
-    router.push("/app");
-  };
 
   const simulateSwipe = (direction: "left" | "right") => {
     setIsTyping(true);
@@ -104,27 +98,24 @@ export default function LLMCardsLanding() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-green-400 hover:text-green-300 hover:bg-green-500/10"
-                onClick={() => window.open("https://github.com/KrzysztofStaron/llm-cards", "_blank")}
-              >
-                <Github className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">source</span>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-green-400 hover:text-green-300 hover:bg-green-500/10">
-                <span className="text-lg font-bold mr-2">𝕏</span>
-                <span className="hidden sm:inline">@PanzerBread</span>
-              </Button>
-              <Button
-                size="sm"
-                className="bg-green-500 text-black hover:bg-green-400 hidden sm:flex font-bold"
-                onClick={handleLaunchApp}
-              >
-                <Play className="w-4 h-4 mr-2" />
-                launch_app
-              </Button>
+              <a href="https://github.com/KrzysztofStaron/llm-cards" target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="sm" className="text-green-400 hover:text-green-300 hover:bg-green-500/10">
+                  <Github className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">source</span>
+                </Button>
+              </a>
+              <a href="https://x.com/PanzerBread" target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="sm" className="text-green-400 hover:text-green-300 hover:bg-green-500/10">
+                  <span className="text-lg font-bold mr-2">𝕏</span>
+                  <span className="hidden sm:inline">@PanzerBread</span>
+                </Button>
+              </a>
+              <a href="/app">
+                <Button size="sm" className="bg-green-500 text-black hover:bg-green-400 hidden sm:flex font-bold">
+                  <Play className="w-4 h-4 mr-2" />
+                  launch_app
+                </Button>
+              </a>
             </div>
           </div>
         </div>
@@ -171,15 +162,13 @@ export default function LLMCardsLanding() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button
-                  size="lg"
-                  className="bg-green-500 text-black hover:bg-green-400 px-8 py-4 text-lg font-bold"
-                  onClick={handleLaunchApp}
-                >
-                  <Terminal className="w-5 h-5 mr-2" />
-                  ./launch_app
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
+                <a href="/app">
+                  <Button size="lg" className="bg-green-500 text-black hover:bg-green-400 px-8 py-4 text-lg font-bold">
+                    <Terminal className="w-5 h-5 mr-2" />
+                    ./launch_app
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </a>
               </div>
 
               <div className="text-green-600 text-sm">
@@ -440,24 +429,23 @@ export default function LLMCardsLanding() {
                 Experience the future of AI interaction. Swipe to explore, tap to discover, think differently.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button
-                  size="lg"
-                  className="bg-green-500 text-black hover:bg-green-400 px-10 py-4 text-lg font-bold"
-                  onClick={handleLaunchApp}
-                >
-                  <Terminal className="w-5 h-5 mr-2" />
-                  ./launch_app
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="px-8 py-4 text-lg border-green-500/30 hover:bg-green-500/10 text-green-400 bg-transparent"
-                  onClick={() => window.open("https://github.com/KrzysztofStaron/llm-cards", "_blank")}
-                >
-                  <Github className="w-5 h-5 mr-2" />
-                  view_source
-                </Button>
+                <a href="/app">
+                  <Button size="lg" className="bg-green-500 text-black hover:bg-green-400 px-10 py-4 text-lg font-bold">
+                    <Terminal className="w-5 h-5 mr-2" />
+                    ./launch_app
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </a>
+                <a href="https://github.com/KrzysztofStaron/llm-cards" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="px-8 py-4 text-lg border-green-500/30 hover:bg-green-500/10 text-green-400 bg-transparent"
+                  >
+                    <Github className="w-5 h-5 mr-2" />
+                    view_source
+                  </Button>
+                </a>
               </div>
               <div className="mt-8 text-sm text-green-600">
                 ✓ Open source • ✓ Terminal aesthetic • ✓ Zero friction • ✓ Infinite exploration
