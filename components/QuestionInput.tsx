@@ -26,20 +26,22 @@ export default function QuestionInput({ onSubmit, isLoading }: QuestionInputProp
       {/* Terminal input window */}
       <div className="bg-black/95 border border-green-500/30 rounded-lg shadow-2xl shadow-green-500/10 p-4">
         {/* Terminal header */}
-        <div className="flex items-center gap-3 mb-3 pb-2 border-b border-green-500/20">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 pb-2 border-b border-green-500/20 overflow-hidden">
           <div className="flex gap-1">
             <div className="w-2 h-2 bg-red-500 rounded-full" />
             <div className="w-2 h-2 bg-yellow-500 rounded-full" />
             <div className="w-2 h-2 bg-green-500 rounded-full" />
           </div>
-          <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-green-400" />
-            <span className="text-green-400 font-mono text-sm tracking-wider">NEURAL_QUERY_INTERFACE</span>
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <Terminal className="w-4 h-4 text-green-400 flex-shrink-0" />
+            <span className="text-green-400 font-mono text-xs md:text-sm tracking-wider truncate">
+              NEURAL_QUERY_INTERFACE
+            </span>
           </div>
           {isLoading && (
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-1 md:gap-2 flex-shrink-0">
               <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-              <span className="text-yellow-400 font-mono text-xs">PROCESSING</span>
+              <span className="text-yellow-400 font-mono text-xs whitespace-nowrap">PROCESSING</span>
             </div>
           )}
         </div>
@@ -53,7 +55,7 @@ export default function QuestionInput({ onSubmit, isLoading }: QuestionInputProp
               onChange={e => setQuestion(e.target.value)}
               placeholder="Enter neural query..."
               disabled={isLoading}
-              className="flex-1 bg-transparent border-none text-green-300 placeholder-green-500/50 font-mono text-sm focus:ring-0 focus:outline-none px-0"
+              className="flex-1 bg-transparent border-none text-green-300 placeholder-green-500/50 font-mono text-sm focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none focus-visible:ring-offset-0 focus-visible:ring-transparent px-0"
               autoFocus
             />
           </div>
@@ -80,7 +82,7 @@ export default function QuestionInput({ onSubmit, isLoading }: QuestionInputProp
             {isLoading ? (
               <span className="animate-pulse">&gt; Connecting to neural networks...</span>
             ) : (
-              <span>&gt; Ready for input | Type your question and press EXEC</span>
+              <span>&gt; Ready for input</span>
             )}
           </div>
         </div>

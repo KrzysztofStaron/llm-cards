@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import QuestionInput from "./QuestionInput";
 import CardSwipeable from "./CardSwipeable";
-import { streamLLM } from "@/app/actions/streamLLM";
+import { streamLLM, generateReasoningBadges } from "@/app/actions/streamLLM";
 
 interface CardData {
   id: string;
@@ -16,12 +16,25 @@ interface CardData {
   reasoningBadges?: string[];
   detailedSections?: { title: string; content: string }[];
   sectionTitle?: string;
+  cachedDetailedResponse?: string; // Cache for detailed response
+  detailedResponses?: string[]; // Array of multiple detailed responses
+  currentDetailedIndex?: number; // Current detailed response index
 }
 
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
 };
+
+interface CardSwipeableProps {
+  card: CardData;
+  onSwipeLeft: () => void;
+  onSwipeRight: () => void;
+  onBadgeClick: (badge: string) => void;
+  onCycleDetailed: () => void;
+  isLoading: boolean;
+  isDetailedSection?: boolean;
+}
 
 export default function CardInterface() {
   const [cards, setCards] = useState<CardData[]>([]);
@@ -53,53 +66,49 @@ export default function CardInterface() {
     return messages;
   };
 
-  const generateReasoningBadges = (question: string, response: string): string[] => {
-    // Simple heuristic to generate alternative reasoning directions
-    // In a real app, this could be AI-generated or more sophisticated
-    const badges: string[] = [];
+  const cacheDetailedResponse = async (cardId: string, question: string, messages: ChatMessage[]) => {
+    try {
+      // Build messages for detailed response
+      const detailedMessages: ChatMessage[] = [
+        ...messages,
+        {
+          role: "user",
+          content:
+            "Please provide a more comprehensive, detailed, and improved answer. Keep it concise and screen-friendly (under 10 lines).",
+        },
+      ];
 
-    if (question.toLowerCase().includes("virus")) {
-      if (response.toLowerCase().includes("biological") || response.toLowerCase().includes("disease")) {
-        badges.push("computer viruses", "antivirus software");
-      } else if (response.toLowerCase().includes("computer") || response.toLowerCase().includes("software")) {
-        badges.push("biological viruses", "immune system");
-      }
+      let cachedResponse = "";
+
+      // Stream the detailed response in background
+      await streamResponse(
+        detailedMessages,
+        "slow",
+        "google/gemini-2.5-pro",
+        chunk => {
+          cachedResponse += chunk;
+        },
+        () => {
+          // Cache the completed response
+          setCards(prevCards => {
+            const updatedCards = [...prevCards];
+            const cardIndex = updatedCards.findIndex(card => card.id === cardId);
+            if (cardIndex >= 0) {
+              updatedCards[cardIndex] = {
+                ...updatedCards[cardIndex],
+                cachedDetailedResponse: cachedResponse,
+              };
+            }
+            return updatedCards;
+          });
+        },
+        error => {
+          console.error("Error caching detailed response:", error);
+        }
+      );
+    } catch (error) {
+      console.error("Error caching detailed response:", error);
     }
-
-    if (question.toLowerCase().includes("memory")) {
-      if (response.toLowerCase().includes("computer") || response.toLowerCase().includes("ram")) {
-        badges.push("human memory", "psychology");
-      } else if (response.toLowerCase().includes("brain") || response.toLowerCase().includes("remember")) {
-        badges.push("computer memory", "storage");
-      }
-    }
-
-    if (question.toLowerCase().includes("network")) {
-      if (response.toLowerCase().includes("computer") || response.toLowerCase().includes("internet")) {
-        badges.push("social networks", "professional networking");
-      } else if (response.toLowerCase().includes("social") || response.toLowerCase().includes("people")) {
-        badges.push("computer networks", "technical networking");
-      }
-    }
-
-    if (question.toLowerCase().includes("security")) {
-      badges.push("cyber security", "physical security", "financial security");
-    }
-
-    if (question.toLowerCase().includes("cloud")) {
-      if (response.toLowerCase().includes("computing") || response.toLowerCase().includes("server")) {
-        badges.push("weather clouds", "meteorology");
-      } else {
-        badges.push("cloud computing", "technology");
-      }
-    }
-
-    // Generic alternatives
-    if (badges.length === 0) {
-      badges.push("technical approach", "practical approach", "theoretical approach");
-    }
-
-    return badges.slice(0, 3); // Limit to 3 badges
   };
 
   const streamResponse = async (
@@ -185,6 +194,7 @@ export default function CardInterface() {
 
     // Start streaming with fast model
     let isFirstChunk = true;
+    let rawResponse = "";
     const abort = await streamResponse(
       messages,
       "fast",
@@ -195,35 +205,38 @@ export default function CardInterface() {
           setIsLoading(false);
           isFirstChunk = false;
         }
-
-        // Update the card's response as chunks arrive
+        rawResponse += chunk;
+        // Show partial response as plain text for streaming effect
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[0].id === newCard.id) {
             updatedCards[0] = {
               ...updatedCards[0],
-              response: updatedCards[0].response + chunk,
+              response: rawResponse,
             };
           }
           return updatedCards;
         });
       },
-      () => {
-        // Mark fast response as complete and generate badges
+      async () => {
+        // Generate badges after response is complete
+        const badges = await generateReasoningBadges(rawResponse, question);
+
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[0].id === newCard.id) {
-            const finalResponse = updatedCards[0].response;
-            const badges = generateReasoningBadges(question, finalResponse);
             updatedCards[0] = {
               ...updatedCards[0],
               isStreaming: false,
               state: "fast_complete",
-              reasoningBadges: badges,
+              response: rawResponse,
+              reasoningBadges: badges.length ? badges : ["More Info", "Related Topics", "Deep Dive"],
             };
           }
           return updatedCards;
         });
+        // Start caching detailed response in background
+        cacheDetailedResponse(newCard.id, question, messages);
         abortControllerRef.current = null;
       },
       error => {
@@ -273,6 +286,7 @@ export default function CardInterface() {
 
     // Start streaming with fast model for steered response
     let isFirstChunk = true;
+    let rawResponse = "";
     const abort = await streamResponse(
       messages,
       "fast",
@@ -283,31 +297,35 @@ export default function CardInterface() {
           setIsLoading(false);
           isFirstChunk = false;
         }
-
+        rawResponse += chunk;
         // Update the card's response as chunks arrive
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[currentCardIndex]) {
             updatedCards[currentCardIndex] = {
               ...updatedCards[currentCardIndex],
-              response: updatedCards[currentCardIndex].response + chunk,
+              response: rawResponse,
             };
           }
           return updatedCards;
         });
       },
-      () => {
-        // Mark fast response as complete and generate new badges
+      async () => {
+        // Generate badges after response is complete
+        const badges = await generateReasoningBadges(
+          rawResponse,
+          `${currentCard.question}\n\nPlease focus specifically on: ${badge}`
+        );
+
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[currentCardIndex]) {
-            const finalResponse = updatedCards[currentCardIndex].response;
-            const badges = generateReasoningBadges(currentCard.question, finalResponse);
             updatedCards[currentCardIndex] = {
               ...updatedCards[currentCardIndex],
               isStreaming: false,
               state: "fast_complete",
-              reasoningBadges: badges,
+              response: rawResponse,
+              reasoningBadges: badges.length ? badges : ["More Info", "Related Topics", "Deep Dive"],
             };
           }
           return updatedCards;
@@ -354,11 +372,12 @@ export default function CardInterface() {
       ...conversationHistory,
       { role: "user", content: currentCard.question },
       { role: "assistant", content: currentCard.response },
-      { role: "user", content: "I don't like this reasoning, approach the problem in another way" },
+      { role: "user", content: "user doesn't like this approach, try something else." },
     ];
 
     // Start streaming with fast model for new approach
     let isFirstChunk = true;
+    let rawResponse = "";
     const abort = await streamResponse(
       messages,
       "fast",
@@ -369,31 +388,32 @@ export default function CardInterface() {
           setIsLoading(false);
           isFirstChunk = false;
         }
-
+        rawResponse += chunk;
         // Update the card's response as chunks arrive
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[0].id === newCard.id) {
             updatedCards[0] = {
               ...updatedCards[0],
-              response: updatedCards[0].response + chunk,
+              response: rawResponse,
             };
           }
           return updatedCards;
         });
       },
-      () => {
-        // Mark fast response as complete and generate badges
+      async () => {
+        // Generate badges after response is complete
+        const badges = await generateReasoningBadges(rawResponse, currentCard.question);
+
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[0].id === newCard.id) {
-            const finalResponse = updatedCards[0].response;
-            const badges = generateReasoningBadges(currentCard.question, finalResponse);
             updatedCards[0] = {
               ...updatedCards[0],
               isStreaming: false,
               state: "fast_complete",
-              reasoningBadges: badges,
+              response: rawResponse,
+              reasoningBadges: badges.length ? badges : ["More Info", "Related Topics", "Deep Dive"],
             };
           }
           return updatedCards;
@@ -422,6 +442,45 @@ export default function CardInterface() {
       abortControllerRef.current = null;
     }
 
+    // Initialize detailed responses array if it doesn't exist
+    if (!currentCard.detailedResponses) {
+      setCards(prevCards => {
+        const updatedCards = [...prevCards];
+        if (updatedCards[currentCardIndex]) {
+          updatedCards[currentCardIndex] = {
+            ...updatedCards[currentCardIndex],
+            detailedResponses: [],
+            currentDetailedIndex: 0,
+          };
+        }
+        return updatedCards;
+      });
+    }
+
+    // Get current index and increment it
+    const currentIndex = currentCard.currentDetailedIndex || 0;
+    const detailedResponses = currentCard.detailedResponses || [];
+
+    // Check if we have a cached detailed response for the current index
+    if (detailedResponses[currentIndex]) {
+      // Use cached response immediately
+      setCards(prevCards => {
+        const updatedCards = [...prevCards];
+        if (updatedCards[currentCardIndex]) {
+          updatedCards[currentCardIndex] = {
+            ...updatedCards[currentCardIndex],
+            model: "google/gemini-2.5-pro",
+            response: detailedResponses[currentIndex],
+            state: "detailed_complete",
+            reasoningBadges: undefined,
+            currentDetailedIndex: currentIndex,
+          };
+        }
+        return updatedCards;
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     // Update current card to detailed responding state
@@ -435,6 +494,7 @@ export default function CardInterface() {
           state: "detailed_responding",
           reasoningBadges: undefined,
           response: "",
+          currentDetailedIndex: currentIndex,
         };
       }
       return updatedCards;
@@ -448,13 +508,16 @@ export default function CardInterface() {
       { role: "assistant", content: currentCard.response },
       {
         role: "user",
-        content:
-          "I like this approach. Please provide a more comprehensive, detailed, and improved answer. Keep it concise and screen-friendly (under 10 lines).",
+        content: `user likes this approach. Please provide a more comprehensive, detailed, and improved answer (variation ${
+          currentIndex + 1
+        }). Keep it concise and screen-friendly (under 10 lines).`,
       },
     ];
 
     // Start streaming with slow model for enhanced response
     let isFirstChunk = true;
+    let rawDetailedResponse = "";
+
     const abort = await streamResponse(
       messages,
       "slow",
@@ -466,27 +529,35 @@ export default function CardInterface() {
           isFirstChunk = false;
         }
 
+        rawDetailedResponse += chunk;
+
         // Update the card's response as chunks arrive
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[currentCardIndex]) {
             updatedCards[currentCardIndex] = {
               ...updatedCards[currentCardIndex],
-              response: updatedCards[currentCardIndex].response + chunk,
+              response: rawDetailedResponse,
             };
           }
           return updatedCards;
         });
       },
       () => {
-        // Mark detailed response as complete
+        // Mark detailed response as complete and cache it
         setCards(prevCards => {
           const updatedCards = [...prevCards];
           if (updatedCards[currentCardIndex]) {
+            const currentDetailedResponses = updatedCards[currentCardIndex].detailedResponses || [];
+            const newDetailedResponses = [...currentDetailedResponses];
+            newDetailedResponses[currentIndex] = rawDetailedResponse;
+
             updatedCards[currentCardIndex] = {
               ...updatedCards[currentCardIndex],
               isStreaming: false,
               state: "detailed_complete",
+              response: rawDetailedResponse,
+              detailedResponses: newDetailedResponses,
             };
           }
           return updatedCards;
@@ -501,27 +572,53 @@ export default function CardInterface() {
     );
   };
 
+  const cycleDetailedResponse = () => {
+    if (cards.length === 0) return;
+
+    const currentCard = cards[currentCardIndex];
+    if (currentCard.state !== "detailed_complete") return;
+
+    const detailedResponses = currentCard.detailedResponses || [];
+    const currentIndex = currentCard.currentDetailedIndex || 0;
+    const nextIndex = (currentIndex + 1) % Math.max(detailedResponses.length, 1);
+
+    setCards(prevCards => {
+      const updatedCards = [...prevCards];
+      if (updatedCards[currentCardIndex]) {
+        updatedCards[currentCardIndex] = {
+          ...updatedCards[currentCardIndex],
+          currentDetailedIndex: nextIndex,
+          response: detailedResponses[nextIndex] || updatedCards[currentCardIndex].response,
+        };
+      }
+      return updatedCards;
+    });
+  };
+
   const currentCard = cards[currentCardIndex];
   const hasDetailedSections = currentCard?.detailedSections && currentCard.detailedSections.length > 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4">
-      <QuestionInput onSubmit={handleQuestionSubmit} isLoading={isLoading} />
+    <div className="w-full max-w-4xl mx-auto h-full flex flex-col">
+      <div className="flex-shrink-0 mb-4">
+        <QuestionInput onSubmit={handleQuestionSubmit} isLoading={isLoading} />
+      </div>
 
       {currentCard && (
-        <div className="relative" style={{ height: "calc(100vh - 200px)" }}>
+        <div className="flex-1 min-h-0 relative">
           <CardSwipeable
             card={currentCard}
             onSwipeLeft={handleSwipeLeft}
             onSwipeRight={handleSwipeRight}
             onBadgeClick={handleBadgeClick}
+            onCycleDetailed={cycleDetailedResponse}
             isLoading={isLoading}
           />
         </div>
       )}
 
       {cards.length > 1 && (
-        <div className="flex justify-center gap-2 py-2">
+        <div className="flex justify-center gap-2 py-2 flex-shrink-0">
           {cards.map((_, index) => (
             <button
               key={index}
@@ -536,9 +633,11 @@ export default function CardInterface() {
       )}
 
       {!currentCard && !isLoading && (
-        <div className="text-center py-20">
-          <p className="text-green-500/80 text-lg font-mono">&gt; READY_FOR_INPUT...</p>
-          <p className="text-green-700/60 text-sm mt-2">[AWAITING_NEURAL_QUERY]</p>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-green-500/80 text-lg font-mono">&gt; READY_FOR_INPUT...</p>
+            <p className="text-green-700/60 text-sm mt-2">[AWAITING_NEURAL_QUERY]</p>
+          </div>
         </div>
       )}
     </div>
