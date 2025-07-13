@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     description:
       "Create and study with AI-generated flashcards. Generate personalized study cards instantly using advanced language models.",
     images: ["/og-image.jpg"], // You'll need to create this image
-    creator: "@llmcards", // Update with your actual Twitter handle
+    creator: "@PanzerBread", // Your X handle
   },
   robots: {
     index: true,
@@ -76,8 +76,6 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   icons: {
     icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
   },
 };
 

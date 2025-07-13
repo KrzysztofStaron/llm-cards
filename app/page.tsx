@@ -16,7 +16,6 @@ import {
   ChevronRight,
   Play,
   Github,
-  Twitter,
   Code,
   ShuffleIcon as Swipe,
   RefreshCw,
@@ -110,8 +109,8 @@ export default function LLMCardsLanding() {
                 <span className="hidden sm:inline">source</span>
               </Button>
               <Button variant="ghost" size="sm" className="text-green-400 hover:text-green-300 hover:bg-green-500/10">
-                <Twitter className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">@llmcards</span>
+                <span className="text-lg font-bold mr-2">𝕏</span>
+                <span className="hidden sm:inline">@PanzerBread</span>
               </Button>
               <Button
                 size="sm"
